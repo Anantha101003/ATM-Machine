@@ -1,0 +1,173 @@
+import os
+#we are importing os file
+#There is no need to install any extra file as os file is pre downloaded in anaconda 
+#This file will will help us to fix path . so we can load our file directlly
+display (os.getcwd())
+# Here we are seeing the path
+os.chdir ('C:\\Users\\kunal\\Downloads\\project')
+# we are fixing our path.
+display (os.getcwd())
+# Displaying new path
+def transfer_account(a,b,c,d,e,us):
+#we are getting a,b,c,d,e,us inside . a is Serial number number . b is 12 digit card n number d is pervious amount .e is new amount .
+#us is user name 
+    print(a, b, c, d, e)
+    f = str(a) + "," + str(b) + "," + str(c) + "," + str(d)+","+ str(us)+ "\n"
+    # we are creating original data base line . before operation
+    g = str(a) + "," + str(b) + "," + str(c) + "," + str(e)+","+ str(us)+"\n"
+    # we are creating new data base line . after operation
+    z = input("Enter the card no : ")
+    # new card is being entered for transfering the money
+    y = z.split(" ")
+    # we are splitting the card on basis off space
+    x = str(y[0])+str(y[1])+str(y[2])
+    # we are joining all the number into one 12 digit string . so we can find the card
+    with open('database.txt', 'r') as file:
+    # we are accessing the database.txt file
+        for line in file:
+            clean_line = line.rstrip('\n')
+            #it is being used to remove trailing newline characters ('\n') from the end of a string.
+            word =clean_line.split(',')
+            # we are splitting the database on column basis
+            number = int(word[1])
+            # here number will only take 12 digit number from database
+            if number == int(x) :
+            # here we are checking the database 12 digit number will match with user 12 digit number
+                u = int(word[0])
+                # after getting our match. we are coping serial number of matched 12 digit number
+                v = int(word[1])
+                # we are getting 12 digit number
+                s = int(word[2])
+                # we are getting pin number
+                t = int(word[3])
+                # we are getting amount
+                user = word[4]
+                # we are getting user name of one we transfering our money
+    w = int(t) + d - e
+    # New amount that transferd user will have
+    h = str(u) + "," + str(v) + "," + str(s) + "," + str(t) +","+ str(user)+ "\n"
+    #we are creating original data base line . before transfer
+    k = str(u) + "," + str(v) + "," + str(s) + "," + str(w) +","+ str(user)+"\n"
+    # we are creating new data base line . after transfer
+    print("Money transfered to ",z," is : ", d-e)
+    with open('database.txt', 'r') as file:
+        # we are reading database file
+        lines = file.readlines()
+    for i in range(len(lines)):
+        if a == i + 1:
+            lines[i] = lines[i].replace(f,g)
+            # we are replacing old database line with new database line of user
+    for j in range(len(lines)):
+        if u == j + 1:
+            lines[j] = lines[j].replace(h,k)
+             # we are replacing old database line with new database line of transfered user account
+    with open('database.txt', 'w') as file:
+        file.writelines(lines)
+        # we are writing all the changes to  database txt file.
+def file_update(a, b, c, d, e, u):
+#we are getting a,b,c,d,e,us inside . a is serial number . b is 12 digit pin number . d is pervious amount .e is new amount
+# us is user name """
+    f = str(a) + "," + str(b) + "," + str(c) + "," + str(d) +","+ str(u)+ "\n"
+    # we are creating original data base line . before operation
+    g = str(a) + "," + str(b) + "," + str(c) + "," + str(e) +","+ str(u)+ "\n"
+     # we are creating new data base line . after operation
+    with open('database.txt', 'r') as file:
+        # we are reading database file
+        lines_before = file.readlines()
+    for i in range(len(lines_before)):
+        if a == i + 1:
+            lines_before[i] = lines_before[i].replace(f, g)
+            # we are replacing old database line with new database line of user
+    with open('database.txt', 'w') as file:
+        file.writelines(lines_before)
+        # we are writing all the changes to  database text file.
+def operator(g,h,j,k,username):
+    #we are getting g,h,j,k,username inside . g is serial number . h is 12 digit  number . j is pin .
+    # k is amount . user name is username """
+    print(g,h,j,k)
+    user = username
+    # user is username
+    i = int(input("enter the password : "))
+    # we are checking the password
+    if j == i :
+        print('''
+        1. Deposit
+        2.withdraw
+        3.ministatement
+        4.transfer
+        5.exit''')
+        # user interface
+        amount=k
+        option=int(input("select your option : "))
+        # user is selecting which option to do
+        if option==1:
+            dep= int(input("Enter the amount: "))
+            # user is deposting . so, amount + deposit
+            amount+=dep
+            # new amount
+            print("Total amount is:",amount)
+            file_update(g,h,j,k,amount,user)
+            # we are calling file_update . so it can update in database
+        elif option==2:
+            withd=int(input("Enter the amount: "))
+            # user is withdrawing . so , amount - withdraw
+            if withd < amount :
+            # checking if the bank balance is greater than amount being withdrawn 
+                amount-=withd
+                # new amount
+                print("Total amount is :",amount)
+                file_update(g,h,j,k,amount,user)
+                # we are calling file_update . so it can update in database
+            else :
+                print("You do not have sufficient bank balance")
+        elif option==3:
+            # for mini statement
+            print("=====ATM=====")
+            print("Username",username) 
+            print("Total amount", amount)
+            print("Thankyou for visiting") 
+            print("visit again")
+        elif option==4 :
+            trans=int(input("Enter the amount: "))
+            # user is transfering
+            if trans < amount :
+                # checking the bank balance is greater than amount being transferd
+                amount-=trans
+                # new amount
+                print("Total amount is :",amount)
+                transfer_account(g,h,j,k,amount,user)
+                # we are calling transfer_account . so we can go further with the process.
+            else :
+                print("You do not have sufficient bank balance")
+        else :
+            print("Goodbye have a nice day")
+    else :
+        print("please enter corret login creedentials")
+a = input(" Enter the card no : ")
+# user is entering his card number
+b =[int(x) for x in a.split(" ")]
+# spliting the card number on basis of space
+e = len(b)
+d = str(b[0])+str(b[1])+str(b[2])
+# making 12 digit string card number
+f = a.split(" ")
+g = "".join(f)
+c = len(str(g))
+# seeing , the length of card number
+print(c)
+print(b)
+if c == 12 :
+# checking the card number is of 12 digit
+    with open('database.txt', 'r') as file:
+        for line in file:
+            clean_line = line.rstrip('\n')
+             #it is being used to remove trailing newline characters ('\n') from the end of a string.
+            word =clean_line.split(',')
+            # we are splitting the database on column basis
+            number = int(word[1])
+            # here number will only take 12 digit  card number from database
+            if number == int(d) :
+                # we are calling opertant functtion . to further process.
+                operator(int(word[0]),int(word[1]),int(word[2]),int(word[3]),word[4])
+else :
+    print("Please enter the right Card number")
